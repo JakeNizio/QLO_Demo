@@ -2,5 +2,6 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
-    path('users/', views.GetUserView.as_view(), name='user-list'),
+    path('geocodeaddress/', views.GeocodeAddressView.as_view(), name='geocodeaddress'),
+    path('optimizeroutes/', views.OptimizeRoutesView.as_view(), name='optimizeroutes'),    
 ]

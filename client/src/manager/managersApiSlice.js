@@ -2,10 +2,22 @@ import { apiSlice } from "../app/api/apiSlice";
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query({
-      query: () => "/api/users/",
+    geocodeAddress: builder.mutation({
+      query: (data) => ({
+        url: "/api/geocodeaddress/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    optimizeRoutes: builder.mutation({
+      query: (data) => ({
+        url: "/api/optimizeroutes/",
+        method: "POST",
+        body: data,
+      }),
     }),
   }),
 });
 
-export const { useGetUsersQuery } = usersApiSlice;
+export const { useOptimizeRoutesMutation, useGeocodeAddressMutation } =
+  usersApiSlice;

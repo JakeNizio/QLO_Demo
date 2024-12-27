@@ -13,12 +13,9 @@ function Login() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    console.log(e.target.username.value);
-    console.log(e.target.password.value);
 
     try {
       const userData = await login({ username, password }).unwrap();
-      console.log(userData);
       dispatch(
         setCredentials({
           user: username,
