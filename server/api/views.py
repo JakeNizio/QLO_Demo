@@ -6,6 +6,10 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -16,11 +20,53 @@ class GeocodeAddressView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        print(request.data)
-        return Response({"message": "Geocoded Address!" }, status=status.HTTP_200_OK)
+        # Validate input data
+        address = request.data.get("address")
+        if not address:
+            return Response(
+                {"error": "Address field is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Format the address for API query
+        formatted_address = address.replace(" ", "+")
+        api_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={formatted_address}&key={os.getenv('GOOGLEMAPS_API_KEY')}"
+
+        try:
+            # Make external API request
+            response = requests.get(api_url, timeout=10)
+            response.raise_for_status()  # Raise exception for HTTP errors
+
+            # Parse JSON response
+            data = response.json()
+
+            # Handle Google API errors
+            if data.get("status") != "OK":
+                error_message = data.get("error_message", "Geocoding failed.")
+                return Response(
+                    {"error": error_message},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Return geocoding results
+            return Response(data, status=status.HTTP_200_OK)
+        
+        except requests.exceptions.HTTPError as http_err:
+            error_message = "An error occurred while fetching data from the API."
+            print(f"HTTP error occurred: {http_err}")
+            return Response({"error": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as err:
+            error_message = "An unexpected error occurred"
+            print(f"Other error occurred: {err}")
+            return Response({"error": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
 class OptimizeRoutesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        depot = request.data.get("depot")
+        deliveries = request.data.get("deliveries")
+        numVehicles = request.data.get("numVehicles")
+        print(request.data)
         return Response({"message": "Routes Optimized!" }, status=status.HTTP_200_OK)
