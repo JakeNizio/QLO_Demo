@@ -168,7 +168,13 @@ function CreateRoutes() {
   async function handleOptimization(e) {
     e.preventDefault();
     try {
-      const response = await optimizeRoutes({ depot, deliveries, numVehicles });
+      const demand = Array.from({ length: deliveries.length }, () => 1);
+      const response = await optimizeRoutes({
+        depot,
+        deliveries,
+        numVehicles,
+        demand,
+      });
       console.log(response);
     } catch (error) {
       console.error(error);
@@ -218,6 +224,8 @@ function CreateRoutes() {
           />
           <button>Optimize Routes</button>
         </form>
+        {optimizeRoutesIsLoading && <p>Loading...</p>}
+        {optimizeRoutesData && <p>{JSON.stringify(optimizeRoutesData)}</p>}
       </div>
       <Modal
         isOpen={modalIsOpen}

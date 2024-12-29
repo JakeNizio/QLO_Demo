@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 import requests
+from optimization.quantumCVRP import quantumCVRP
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -67,6 +68,16 @@ class OptimizeRoutesView(APIView):
     def post(self, request):
         depot = request.data.get("depot")
         deliveries = request.data.get("deliveries")
-        numVehicles = request.data.get("numVehicles")
-        print(request.data)
-        return Response({"message": "Routes Optimized!" }, status=status.HTTP_200_OK)
+        numVehicles = int(request.data.get("numVehicles"))
+        demand = request.data.get("demand")
+
+        depotCoordinates = (depot["navigation_points"][0]["location"]["latitude"], depot["navigation_points"][0]["location"]["longitude"])
+
+        deliveriesCoordinates = []
+        for delivery in deliveries:
+            deliveriesCoordinates.append((delivery["navigation_points"][0]["location"]["latitude"], delivery["navigation_points"][0]["location"]["longitude"]))
+
+        results = quantumCVRP(demand, depotCoordinates, deliveriesCoordinates, numVehicles)
+        print(results)
+        return Response({"routes": results}, status=status.HTTP_200_OK)
+        # return Response({"message": "Routes Optimized!" }, status=status.HTTP_200_OK)
