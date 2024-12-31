@@ -1,9 +1,14 @@
 import Modal from "react-modal";
+import RouteMap from "../components/RouteMap";
 import { useState } from "react";
 import {
   useOptimizeRoutesMutation,
   useGeocodeAddressMutation,
 } from "./managersApiSlice";
+import {
+  depot as testDepot,
+  deliveries as testDeliveries,
+} from "./testData.js";
 
 Modal.setAppElement("#root");
 
@@ -25,59 +30,9 @@ function CreateRoutes() {
     },
   ] = useGeocodeAddressMutation();
 
-  const depotTest = {
-    address_components: [
-      { long_name: "17600", short_name: "17600", types: ["street_number"] },
-      { long_name: "Yonge Street", short_name: "Yonge St", types: ["route"] },
-      {
-        long_name: "Newmarket",
-        short_name: "Newmarket",
-        types: ["locality", "political"],
-      },
-      {
-        long_name: "Newmarket",
-        short_name: "Newmarket",
-        types: ["administrative_area_level_3", "political"],
-      },
-      {
-        long_name: "Regional Municipality of York",
-        short_name: "Regional Municipality of York",
-        types: ["administrative_area_level_2", "political"],
-      },
-      {
-        long_name: "Ontario",
-        short_name: "ON",
-        types: ["administrative_area_level_1", "political"],
-      },
-      {
-        long_name: "Canada",
-        short_name: "CA",
-        types: ["country", "political"],
-      },
-      { long_name: "L3Y 4Z1", short_name: "L3Y 4Z1", types: ["postal_code"] },
-    ],
-    formatted_address: "17600 Yonge St, Newmarket, ON L3Y 4Z1, Canada",
-    geometry: {
-      bounds: {
-        northeast: { lat: 44.0576214, lng: -79.48343349999999 },
-        southwest: { lat: 44.054976, lng: -79.4878745 },
-      },
-      location: { lat: 44.056104, lng: -79.4855044 },
-      location_type: "ROOFTOP",
-      viewport: {
-        northeast: { lat: 44.0576476802915, lng: -79.48343349999999 },
-        southwest: { lat: 44.0549497197085, lng: -79.4878745 },
-      },
-    },
-    navigation_points: [
-      { location: { latitude: 44.0555536, longitude: -79.4854527 } },
-    ],
-    place_id: "ChIJ2zyvjeXRKogRUESBLt8mhI0",
-    types: ["premise"],
-  };
-  const [deliveries, setDeliveries] = useState([]);
-  const [numVehicles, setNumVehicles] = useState(1);
-  const [depot, setDepot] = useState(depotTest);
+  const [deliveries, setDeliveries] = useState(testDeliveries);
+  const [numVehicles, setNumVehicles] = useState(2);
+  const [depot, setDepot] = useState(testDepot);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   function setModalOpen() {
@@ -150,6 +105,7 @@ function CreateRoutes() {
     try {
       const response = await geocodeAddress({ address });
       const result = response.data.results[0];
+      console.log(result);
       setDeliveries([...deliveries, result]);
     } catch (error) {
       console.error(error);
@@ -225,7 +181,13 @@ function CreateRoutes() {
           <button>Optimize Routes</button>
         </form>
         {optimizeRoutesIsLoading && <p>Loading...</p>}
-        {optimizeRoutesData && <p>{JSON.stringify(optimizeRoutesData)}</p>}
+        {optimizeRoutesData && (
+          <RouteMap
+            route={optimizeRoutesData}
+            deliveries={testDeliveries}
+            depot={testDepot}
+          />
+        )}
       </div>
       <Modal
         isOpen={modalIsOpen}
