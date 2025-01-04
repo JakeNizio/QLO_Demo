@@ -24,10 +24,36 @@
   border: none;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .create-routes-deliveries ul li button:hover {
   color: rgb(225, 0, 0);
+}
+
+.create-routes-results i {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.create-routes-results-buttons {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.create-routes-results button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease-in-out;
+  border: 3px solid transparent;
+  align-items: stretch;
+}
+
+.create-routes-results button:hover {
+  border: 3px solid purple;
 }

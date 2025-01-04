@@ -14,6 +14,27 @@ import {
 
 Modal.setAppElement("#root");
 
+const addDeliveryStyles = {
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  content: {
+    maxHeight: "90vh",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, 0)",
+    scrollbarWidth: "thin",
+  },
+};
+
+const viewRouteStyles = {
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+};
+
 function CreateRoutes() {
   const [
     optimizeRoutes,
@@ -166,7 +187,7 @@ function CreateRoutes() {
                     setDeliveries(deliveries.filter((_, i) => i !== index))
                   }
                 >
-                  X
+                  ✖
                 </button>
               </li>
             ))}
@@ -177,7 +198,8 @@ function CreateRoutes() {
         </div>
         <hr />
         <div className="page-section create-routes-optimizations">
-          <form onSubmit={handleOptimization}>
+          <h2>Optimize Routes</h2>
+          <form className="form" onSubmit={handleOptimization}>
             <label htmlFor="numVehicles">Number of Vehicles:</label>
             <input
               type="number"
@@ -199,22 +221,30 @@ function CreateRoutes() {
             />
             <button className="btn btn-primary">Optimize Routes</button>
           </form>
+          {optimizeRoutesIsLoading && <p>Loading...</p>}
         </div>
-        {optimizeRoutesIsLoading && <p>Loading...</p>}
         {optimizeRoutesData && (
           <>
             <hr />
-
             <div className="page-section create-routes-results">
               <h2>Results</h2>
-              {optimizeRoutesData.data.map((route, index) => (
-                <button
-                  key={index}
-                  onClick={() => setModalViewRouteOpen(route)}
-                >
-                  Route {index + 1}: {route.deliveries.length} stops
-                </button>
-              ))}
+              {/* <i>Select Route To View</i> */}
+              <div className="create-routes-results-buttons">
+                {optimizeRoutesData.data.map((route, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setModalViewRouteOpen(route)}
+                  >
+                    <b>Route {index + 1} |</b>
+                    {` ${route.deliveries.length} stops | ${(
+                      route.routes[0].distanceMeters / 1000
+                    ).toFixed(1)} km | ${route.deliveries.reduce(
+                      (acc, id) => acc + deliveries[id].demand,
+                      0
+                    )} demand`}
+                  </button>
+                ))}
+              </div>
             </div>
           </>
         )}
@@ -222,45 +252,61 @@ function CreateRoutes() {
       <Modal
         isOpen={modalAddDeliveryIsOpen}
         onRequestClose={setModalAddDeliveryClose}
+        style={addDeliveryStyles}
         contentLabel="Add Delivery"
       >
-        <h2>Add Delivery</h2>
-        <form onSubmit={handleAddDelivery}>
-          <label htmlFor="streetnumber">Street Number:</label>
-          <input type="text" id="streetnumber" required />
-          <label htmlFor="streetname">Street Name:</label>
-          <input type="text" id="streetname" required />
-          <label htmlFor="postalcode">Postal Code:</label>
-          <input type="text" id="postalcode" required />
-          <label htmlFor="city">City:</label>
-          <input type="text" id="city" required />
-          <label htmlFor="province">Province:</label>
-          <select id="province" required>
-            <option value="AB">AB</option>
-            <option value="BC">BC</option>
-            <option value="MB">MB</option>
-            <option value="NB">NB</option>
-            <option value="NL">NL</option>
-            <option value="NS">NS</option>
-            <option value="NT">NT</option>
-            <option value="NU">NU</option>
-            <option value="ON">ON</option>
-            <option value="PE">PE</option>
-            <option value="QC">QC</option>
-            <option value="SK">SK</option>
-            <option value="YT">YT</option>
-          </select>
-          <label htmlFor="demand">Demand:</label>
-          <input type="number" id="demand" min="1" required />
-          <button className="btn btn-primary">Add</button>
-        </form>
+        <button className="modal-close" onClick={setModalAddDeliveryClose}>
+          ✖
+        </button>
+        <div className="page-frame">
+          <h2>Add Delivery</h2>
+          <hr />
+          <div className="page-section">
+            <form
+              className="form add-delivery-form"
+              onSubmit={handleAddDelivery}
+            >
+              <label htmlFor="streetnumber">Street Number:</label>
+              <input type="text" id="streetnumber" required />
+              <label htmlFor="streetname">Street Name:</label>
+              <input type="text" id="streetname" required />
+              <label htmlFor="postalcode">Postal Code:</label>
+              <input type="text" id="postalcode" required />
+              <label htmlFor="city">City:</label>
+              <input type="text" id="city" required />
+              <label htmlFor="province">Province:</label>
+              <select id="province" required>
+                <option value="AB">AB</option>
+                <option value="BC">BC</option>
+                <option value="MB">MB</option>
+                <option value="NB">NB</option>
+                <option value="NL">NL</option>
+                <option value="NS">NS</option>
+                <option value="NT">NT</option>
+                <option value="NU">NU</option>
+                <option value="ON">ON</option>
+                <option value="PE">PE</option>
+                <option value="QC">QC</option>
+                <option value="SK">SK</option>
+                <option value="YT">YT</option>
+              </select>
+              <label htmlFor="demand">Demand:</label>
+              <input type="number" id="demand" min="1" required />
+              <button className="btn btn-primary">Add</button>
+            </form>
+          </div>
+        </div>
       </Modal>
       <Modal
         isOpen={modalViewRouteIsOpen}
         onRequestClose={setModalViewRouteClose}
+        style={viewRouteStyles}
         contentLabel="View Route"
       >
-        <h2>View Route</h2>
+        <button className="modal-close" onClick={setModalViewRouteClose}>
+          ✖
+        </button>
+        <h2>View Route </h2>
         {selectedRoute && (
           <RouteMap
             route={selectedRoute}
