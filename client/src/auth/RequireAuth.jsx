@@ -8,7 +8,7 @@ function RequireAuth() {
 
   return (
     <>
-      <p>auth</p>
+      {/* <p>auth</p> */}
       {token ? (
         <Outlet />
       ) : (

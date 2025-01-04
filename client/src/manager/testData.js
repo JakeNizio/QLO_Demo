@@ -167,6 +167,8 @@ export const deliveries = [
       global_code: "87M2JJXF+HV",
     },
     types: ["street_address"],
+    demand: 10,
+    // demand: 1,
   },
   {
     address_components: [
@@ -248,6 +250,8 @@ export const deliveries = [
       global_code: "87M2MHGQ+PW",
     },
     types: ["street_address"],
+    demand: 20,
+    // demand: 1,
   },
   {
     address_components: [
@@ -335,6 +339,8 @@ export const deliveries = [
     ],
     place_id: "ChIJrzvENyLM1IkR4MulDKcKHRA",
     types: ["premise"],
+    demand: 20,
+    // demand: 1,
   },
   {
     address_components: [
@@ -416,6 +422,8 @@ export const deliveries = [
       global_code: "87M2MJ39+QP",
     },
     types: ["street_address"],
+    demand: 40,
+    // demand: 1,
   },
   {
     address_components: [
@@ -511,6 +519,8 @@ export const deliveries = [
     ],
     place_id: "ChIJBzcf--bK1IkRZ3FKdp3FuMw",
     types: ["premise"],
+    demand: 10,
+    // demand: 1,
   },
   {
     address_components: [
@@ -599,6 +609,8 @@ export const deliveries = [
     ],
     place_id: "ChIJoaqM0uIwK4gR-KtxJCNH1Xo",
     types: ["premise"],
+    demand: 50,
+    // demand: 1,
   },
   {
     address_components: [
@@ -686,6 +698,8 @@ export const deliveries = [
     ],
     place_id: "ChIJHxMfwD3O1IkRBCmTyZoSRn0",
     types: ["premise"],
+    demand: 10,
+    // demand: 1,
   },
   {
     address_components: [
@@ -767,6 +781,8 @@ export const deliveries = [
       global_code: "87M2MG4P+X6",
     },
     types: ["street_address"],
+    demand: 5,
+    // demand: 1,
   },
   {
     address_components: [
@@ -862,5 +878,7 @@ export const deliveries = [
     ],
     place_id: "ChIJUfM1Tsw0K4gR03guYRs7AeA",
     types: ["premise"],
+    demand: 5,
+    // demand: 1,
   },
 ];

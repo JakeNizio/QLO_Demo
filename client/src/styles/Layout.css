@@ -1,0 +1,64 @@
+* {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: rgb(243, 243, 243);
+}
+
+.layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: purple; /* Background extends to full width */
+  height: 70px;
+  padding: 0 20px;
+  color: white;
+  width: 100%;
+  position: relative;
+}
+
+.layout-header > * {
+  /* Target direct children */
+  max-width: 1300px; /* Constrain content width */
+  width: 100%; /* Allow responsiveness */
+  margin: 0 auto; /* Center content */
+  display: flex; /* Maintain flex properties for alignment */
+  justify-content: space-between;
+  align-items: center;
+}
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
+  width: 100vw; /* Full viewport width for the background */
+  position: relative;
+}
+
+.layout-container > * {
+  /* Target direct children */
+  max-width: 1300px; /* Constrain content width */
+  width: 100%; /* Allow responsiveness */
+  margin: 0 auto; /* Center content */
+  display: flex; /* Maintain flex properties for alignment */
+  flex-direction: column;
+  align-items: center;
+  min-height: calc(100vh - 70px); /* Subtract header height */
+}

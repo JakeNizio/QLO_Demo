@@ -11,6 +11,8 @@ function RouteMap({ route, deliveries, depot }) {
       const colors = [];
       const startColor = [255, 193, 113];
       const endColor = [255, 97, 109];
+      // const startColor = [214, 167, 214];
+      // const endColor = [100, 0, 100];
 
       for (let i = 0; i < numPoints; i++) {
         const ratio = i / (numPoints - 1); // Calculate ratio for interpolation

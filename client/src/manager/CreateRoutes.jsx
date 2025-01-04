@@ -1,3 +1,5 @@
+import "../styles/CreateRoutes.css";
+
 import Modal from "react-modal";
 import RouteMap from "../components/RouteMap";
 import { useState } from "react";
@@ -33,14 +35,26 @@ function CreateRoutes() {
   const [deliveries, setDeliveries] = useState(testDeliveries);
   const [numVehicles, setNumVehicles] = useState(2);
   const [depot, setDepot] = useState(testDepot);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalAddDeliveryIsOpen, setModalAddDeliveryIsOpen] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [modalViewRouteIsOpen, setModalViewRouteIsOpen] = useState(false);
 
-  function setModalOpen() {
-    setModalIsOpen(true);
+  function setModalAddDeliveryOpen() {
+    setModalAddDeliveryIsOpen(true);
   }
 
-  function setModalClose() {
-    setModalIsOpen(false);
+  function setModalAddDeliveryClose() {
+    setModalAddDeliveryIsOpen(false);
+  }
+
+  function setModalViewRouteOpen(route) {
+    setSelectedRoute(route);
+    setModalViewRouteIsOpen(true);
+  }
+
+  function setModalViewRouteClose() {
+    setSelectedRoute(null);
+    setModalViewRouteIsOpen(false);
   }
 
   async function handleAddDelivery(e) {
@@ -105,12 +119,13 @@ function CreateRoutes() {
     try {
       const response = await geocodeAddress({ address });
       const result = response.data.results[0];
+      const demand = e.target.elements.demand.value;
       console.log(result);
-      setDeliveries([...deliveries, result]);
+      setDeliveries([...deliveries, { ...result, demand: demand }]);
     } catch (error) {
       console.error(error);
     }
-    setModalClose();
+    setModalAddDeliveryClose();
   }
 
   function handleNumVehiclesChange(e) {
@@ -124,12 +139,10 @@ function CreateRoutes() {
   async function handleOptimization(e) {
     e.preventDefault();
     try {
-      const demand = Array.from({ length: deliveries.length }, () => 1);
       const response = await optimizeRoutes({
         depot,
         deliveries,
         numVehicles,
-        demand,
       });
       console.log(response);
     } catch (error) {
@@ -139,59 +152,76 @@ function CreateRoutes() {
 
   return (
     <>
-      <div>
+      <div className="page-frame">
         <h1>Create Routes</h1>
-        <h2>Deliveries</h2>
-        <ul>
-          {deliveries.map((delivery, index) => (
-            <li key={index}>
-              {delivery.formatted_address}
-              <button
-                onClick={() =>
-                  setDeliveries(deliveries.filter((_, i) => i !== index))
-                }
-              >
-                x
-              </button>
-            </li>
-          ))}
-        </ul>
-        <button onClick={setModalOpen}>Add Delivery</button>
-        <br />
-        <form onSubmit={handleOptimization}>
-          <label htmlFor="numVehicles">Number of Vehicles:</label>
-          <input
-            type="number"
-            id="numVehicles"
-            min="1"
-            max="5"
-            required
-            value={numVehicles}
-            onChange={handleNumVehiclesChange}
-          />
-          <label htmlFor="depot">Depot:</label>
-          <input
-            type="text"
-            id="depot"
-            required
-            disabled
-            value={depot.formatted_address}
-            onChange={handleDepotChange}
-          />
-          <button>Optimize Routes</button>
-        </form>
+        <hr />
+        <div className="page-section create-routes-deliveries">
+          <h2>Deliveries</h2>
+          <ul>
+            {deliveries.map((delivery, index) => (
+              <li key={index}>
+                {`${delivery.formatted_address} (Demand: ${delivery.demand})`}
+                <button
+                  onClick={() =>
+                    setDeliveries(deliveries.filter((_, i) => i !== index))
+                  }
+                >
+                  X
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button className="btn btn-primary" onClick={setModalAddDeliveryOpen}>
+            Add Delivery
+          </button>
+        </div>
+        <hr />
+        <div className="page-section create-routes-optimizations">
+          <form onSubmit={handleOptimization}>
+            <label htmlFor="numVehicles">Number of Vehicles:</label>
+            <input
+              type="number"
+              id="numVehicles"
+              min="1"
+              max="5"
+              required
+              value={numVehicles}
+              onChange={handleNumVehiclesChange}
+            />
+            <label htmlFor="depot">Depot:</label>
+            <input
+              type="text"
+              id="depot"
+              required
+              disabled
+              value={depot.formatted_address}
+              onChange={handleDepotChange}
+            />
+            <button className="btn btn-primary">Optimize Routes</button>
+          </form>
+        </div>
         {optimizeRoutesIsLoading && <p>Loading...</p>}
         {optimizeRoutesData && (
-          <RouteMap
-            route={optimizeRoutesData}
-            deliveries={testDeliveries}
-            depot={testDepot}
-          />
+          <>
+            <hr />
+
+            <div className="page-section create-routes-results">
+              <h2>Results</h2>
+              {optimizeRoutesData.data.map((route, index) => (
+                <button
+                  key={index}
+                  onClick={() => setModalViewRouteOpen(route)}
+                >
+                  Route {index + 1}: {route.deliveries.length} stops
+                </button>
+              ))}
+            </div>
+          </>
         )}
       </div>
       <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={setModalClose}
+        isOpen={modalAddDeliveryIsOpen}
+        onRequestClose={setModalAddDeliveryClose}
         contentLabel="Add Delivery"
       >
         <h2>Add Delivery</h2>
@@ -220,8 +250,24 @@ function CreateRoutes() {
             <option value="SK">SK</option>
             <option value="YT">YT</option>
           </select>
-          <button>Add</button>
+          <label htmlFor="demand">Demand:</label>
+          <input type="number" id="demand" min="1" required />
+          <button className="btn btn-primary">Add</button>
         </form>
+      </Modal>
+      <Modal
+        isOpen={modalViewRouteIsOpen}
+        onRequestClose={setModalViewRouteClose}
+        contentLabel="View Route"
+      >
+        <h2>View Route</h2>
+        {selectedRoute && (
+          <RouteMap
+            route={selectedRoute}
+            deliveries={selectedRoute.deliveries.map((id) => deliveries[id])}
+            depot={depot}
+          />
+        )}
       </Modal>
     </>
   );
