@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import "../styles/Page.css";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useLoginMutation } from "./authApiSlice";
 import { useDispatch } from "react-redux";
@@ -25,7 +26,7 @@ function Login() {
       );
       setUsername("");
       setPassword("");
-      navigate("/createroutes");
+      navigate("/");
     } catch (err) {
       console.log(err);
       if (!err?.status) {
@@ -47,12 +48,13 @@ function Login() {
   }
 
   return (
-    <div>
+    <div className="page-frame">
       <h1>Login</h1>
+      <hr />
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <form onSubmit={handleLogin}>
+        <form className="form" onSubmit={handleLogin}>
           <label htmlFor="username">Username</label>
           <input
             type="text"
@@ -69,9 +71,12 @@ function Login() {
             onChange={handlePasswordChange}
             required
           />
-          <button type="submit">Login</button>
+          <button className="btn btn-primary" type="submit">
+            Login
+          </button>
         </form>
       )}
+      <Link to={"/register"}>Create an account</Link>
     </div>
   );
 }

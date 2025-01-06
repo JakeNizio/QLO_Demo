@@ -43,6 +43,17 @@ html {
   align-items: center;
 }
 
+.layout-header h1 {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.layout-header h1:hover {
+  text-decoration-color: white;
+}
+
 .layout-container {
   display: flex;
   flex-direction: column;
