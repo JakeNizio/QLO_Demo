@@ -24,9 +24,17 @@ Mac: `env/bin/activate`
 
 `pip install -r requirements.txt`
 
+### Run Django migrate:
+
+`py manage.py migrate`
+
 ### Create a .env file
 
 _Replace yourTokenHere with your tokens, Google token must have Maps JavaScript API & Routes API enabled_  
+Windows (Powershell):  
+`Set-Content -Path .env -Value "DWAVELEAP_TOKEN=yourTokenHere"`  
+`Add-Content -Path .env -Value "GOOGLEMAPS_API_KEY=yourTokenHere"`  
+Mac:  
 `echo "DWAVELEAP_TOKEN=yourTokenHere" > .env && echo "GOOGLEMAPS_API_KEY=yourTokenHere" >> .env`
 
 ## JS/React/Client Setup
@@ -42,7 +50,8 @@ _Replace yourTokenHere with your tokens, Google token must have Maps JavaScript 
 ### Create a .env file
 
 _Replace yourTokenHere with your token, Google token must have Maps JavaScript API & Routes API enabled_  
-`echo "VITE_GOOGLEMAPS_API_KEY=yourTokenHere" > .env`
+Windows (Powershell): `Set-Content -Path .env -Value "VITE_GOOGLEMAPS_API_KEY=yourTokenHere"`  
+Mac: `echo "VITE_GOOGLEMAPS_API_KEY=yourTokenHere" > .env`
 
 ## Running Demo
 
