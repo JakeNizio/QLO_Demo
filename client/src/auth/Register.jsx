@@ -1,48 +1,50 @@
 import "../styles/Page.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useLoginMutation } from "./authApiSlice";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "./authSlice";
+import { useRegisterMutation } from "./authApiSlice";
 
 function Register() {
   const navigate = useNavigate();
+
+  // state variables
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmpassword] = useState("");
-  const [login, { isLoading }] = useLoginMutation();
-  const dispatch = useDispatch();
+  const [register, { isLoading }] = useRegisterMutation();
 
+  // handle register form submission
   async function handleRegister(e) {
     e.preventDefault();
 
+    // validate password
     if (password !== confirmpassword) {
       alert("Passwords do not match");
       return;
     }
 
-    // try {
-    //   const userData = await login({ username, password }).unwrap();
-    //   dispatch(
-    //     setCredentials({
-    //       user: username,
-    //       accessToken: userData.access,
-    //       refreshToken: userData.refresh,
-    //     })
-    //   );
-    //   setUsername("");
-    //   setPassword("");
-    //   navigate("/");
-    // } catch (err) {
-    //   console.log(err);
-    //   if (!err?.status) {
-    //     console.error("No server response");
-    //   } else if (err.status === 401) {
-    //     console.error("Invalid username or password");
-    //   } else {
-    //     console.error("Register failed");
-    //   }
-    // }
+    // register the user
+    try {
+      await register({ username, password }).unwrap(); // call the register mutation
+
+      // reset state
+      setUsername("");
+      setPassword("");
+      setConfirmpassword("");
+
+      // redirect to login page
+      alert("Registration successful");
+      navigate("/login");
+    } catch (err) {
+      // handle error
+      alert("Registration failed");
+      if (!err?.status) {
+        console.error("No server response");
+      } else if (err.status === 401) {
+        console.error("Invalid username or password");
+      } else {
+        console.error("Register failed");
+      }
+    }
   }
 
   function handleUsernameChange(e) {
@@ -61,9 +63,10 @@ function Register() {
     <div className="page-frame">
       <h1>Register</h1>
       <hr />
-      {isLoading ? (
+      {isLoading ? ( // show loading message if the register mutation is in progress
         <p>Loading...</p>
       ) : (
+        // show the register form if the register mutation is not in progress
         <form className="form" onSubmit={handleRegister}>
           <label htmlFor="username">Username</label>
           <input

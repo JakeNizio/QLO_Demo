@@ -1,18 +1,18 @@
 import { APIProvider, Map, useMap, Marker } from "@vis.gl/react-google-maps";
 import { useRef, useEffect } from "react";
+import PropTypes from "prop-types";
 
 function RouteMap({ route, deliveries, depot }) {
+  // Define a component to render the route polyline
   const PolylineComponent = () => {
     const map = useMap(); // Access the map instance
     const polylineRef = useRef(null);
 
+    // Generate a gradient array of colors based on the number of points
     const generateGradient = (numPoints) => {
-      // Generate a gradient array of colors based on the number of points
       const colors = [];
       const startColor = [255, 193, 113];
       const endColor = [255, 97, 109];
-      // const startColor = [214, 167, 214];
-      // const endColor = [100, 0, 100];
 
       for (let i = 0; i < numPoints; i++) {
         const ratio = i / (numPoints - 1); // Calculate ratio for interpolation
@@ -26,6 +26,7 @@ function RouteMap({ route, deliveries, depot }) {
       return colors;
     };
 
+    // create the route polyline
     useEffect(() => {
       // Check if Google Maps API is loaded
       if (map && window.google && window.google.maps) {
@@ -53,18 +54,6 @@ function RouteMap({ route, deliveries, depot }) {
           polyline.setMap(map);
         }
 
-        // // Create the polyline
-        // polylineRef.current = new window.google.maps.Polyline({
-        //   path,
-        //   geodesic: true,
-        //   strokeColor: "#FF0000",
-        //   strokeOpacity: 1.0,
-        //   strokeWeight: 4,
-        // });
-
-        // // Add polyline to the map
-        // polylineRef.current.setMap(map);
-
         // Calculate and fit bounds to polyline
         const bounds = new window.google.maps.LatLngBounds();
         path.forEach((point) => bounds.extend(point)); // Extend bounds for each point
@@ -74,9 +63,10 @@ function RouteMap({ route, deliveries, depot }) {
       }
 
       // Cleanup polyline
+      const currentPolyline = polylineRef.current;
       return () => {
-        if (polylineRef.current) {
-          polylineRef.current.setMap(null);
+        if (currentPolyline) {
+          currentPolyline.setMap(null);
         }
       };
     }, [map]);
@@ -86,14 +76,17 @@ function RouteMap({ route, deliveries, depot }) {
 
   // Define a function to create markers
   const createMarkers = (locations, type) => {
+    // Create markers for each location
     return locations.map((location, index) => {
       return (
         <Marker
           key={index}
+          // Set the label to the index of the delivery or "D" for depot
           label={{
             text: type === "delivery" ? `${index + 1}` : "D",
             color: "white",
           }}
+          // Set the position to the first navigation point
           position={{
             lat: location.navigation_points[0].location.latitude,
             lng: location.navigation_points[0].location.longitude,
@@ -104,22 +97,26 @@ function RouteMap({ route, deliveries, depot }) {
   };
 
   return (
+    // Wrap the map in an APIProvider with the Google Maps API key
     <APIProvider
       apiKey={import.meta.env.VITE_GOOGLEMAPS_API_KEY}
       libraries={["geometry"]}
     >
-      <div style={{ height: "500px", width: "100%" }}>
+      <div style={{ height: "100%", width: "100%" }}>
+        {/* Render the map */}
         <Map
           id="map"
           defaultCenter={{ lat: 44.0356414, lng: -79.48604770000001 }}
           defaultZoom={12}
           options={{
-            mapTypeControl: false, // Remove the map type (satellite, terrain, etc.)
-            streetViewControl: false, // Remove the street view control
-            fullscreenControl: false, // Optional: Remove fullscreen control
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false,
           }}
         >
+          {/* Render the polyline component */}
           <PolylineComponent />
+          {/* Render markers for deliveries and depot */}
           {createMarkers(deliveries, "delivery")}
           {createMarkers([depot], "depot")}
         </Map>
@@ -127,5 +124,12 @@ function RouteMap({ route, deliveries, depot }) {
     </APIProvider>
   );
 }
+
+// Define prop types for RouteMap component
+RouteMap.propTypes = {
+  route: PropTypes.object.isRequired,
+  deliveries: PropTypes.array.isRequired,
+  depot: PropTypes.object.isRequired,
+};
 
 export default RouteMap;

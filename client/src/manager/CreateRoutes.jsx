@@ -1,5 +1,4 @@
 import "../styles/CreateRoutes.css";
-
 import Modal from "react-modal";
 import RouteMap from "../components/RouteMap";
 import { useState } from "react";
@@ -7,14 +6,17 @@ import {
   useOptimizeRoutesMutation,
   useGeocodeAddressMutation,
 } from "./managersApiSlice";
+
+// Test data for the depot and deliveries
 import {
   depot as testDepot,
   deliveries as testDeliveries,
 } from "./testData.js";
 
-Modal.setAppElement("#root");
+Modal.setAppElement("#root"); // Set the modal root element to the root div
 
 const addDeliveryStyles = {
+  // Styles for the Add Delivery modal
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
@@ -30,32 +32,34 @@ const addDeliveryStyles = {
 };
 
 const viewRouteStyles = {
+  // Styles for the View Route modal
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  content: {
+    maxHeight: "90vh",
+    maxWidth: "90vw",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, 0)",
+    scrollbarWidth: "thin",
   },
 };
 
 function CreateRoutes() {
+  // Use the optimizeRoutes and geocodeAddress mutations from the API slice
   const [
     optimizeRoutes,
-    {
-      data: optimizeRoutesData,
-      error: optimizeRoutesError,
-      isLoading: optimizeRoutesIsLoading,
-    },
+    { data: optimizeRoutesData, isLoading: optimizeRoutesIsLoading },
   ] = useOptimizeRoutesMutation();
-  const [
-    geocodeAddress,
-    {
-      data: geocodeAddressData,
-      error: geocodeAddressError,
-      isLoading: geocodeAddressIsLoading,
-    },
-  ] = useGeocodeAddressMutation();
+  const [geocodeAddress] = useGeocodeAddressMutation();
 
-  const [deliveries, setDeliveries] = useState(testDeliveries);
+  // Initialize state variables
+  const [deliveries, setDeliveries] = useState(testDeliveries); // Initialized with test data
   const [numVehicles, setNumVehicles] = useState(2);
-  const [depot, setDepot] = useState(testDepot);
+  const [depot, setDepot] = useState(testDepot); // Initialized with test data
   const [modalAddDeliveryIsOpen, setModalAddDeliveryIsOpen] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [modalViewRouteIsOpen, setModalViewRouteIsOpen] = useState(false);
@@ -78,13 +82,17 @@ function CreateRoutes() {
     setModalViewRouteIsOpen(false);
   }
 
+  // Handle adding a delivery
   async function handleAddDelivery(e) {
     e.preventDefault();
+
+    // Get form values
     const streetnumber = e.target.elements.streetnumber.value.trim();
     const streetname = e.target.elements.streetname.value.trim();
     const postalcode = e.target.elements.postalcode.value.trim();
     const city = e.target.elements.city.value.trim();
     const province = e.target.elements.province.value.trim();
+
     // Validation flags
     let errors = [];
 
@@ -94,7 +102,7 @@ function CreateRoutes() {
     }
 
     // Validate street name (letters, spaces, and hyphens allowed)
-    if (!streetname || !/^[a-zA-Z\s\-]+$/.test(streetname)) {
+    if (!streetname || !/^[a-zA-Z\s-]+$/.test(streetname)) {
       errors.push("Street name must contain only letters, spaces, or hyphens.");
     }
 
@@ -137,12 +145,12 @@ function CreateRoutes() {
     // Concatenate validated address
     let address = `${streetnumber} ${streetname}, ${city}, ${province}, ${postalcode}`;
 
+    // Get geocode data for the address
     try {
-      const response = await geocodeAddress({ address });
-      const result = response.data.results[0];
-      const demand = e.target.elements.demand.value;
-      console.log(result);
-      setDeliveries([...deliveries, { ...result, demand: demand }]);
+      const response = await geocodeAddress({ address }); // Call the geocodeAddress mutation
+      const result = response.data.results[0]; // Get the first result
+      const demand = e.target.elements.demand.value; // Get the demand value from the form
+      setDeliveries([...deliveries, { ...result, demand: demand }]); // Add the delivery to the list
     } catch (error) {
       console.error(error);
     }
@@ -157,15 +165,17 @@ function CreateRoutes() {
     setDepot(e.target.value);
   }
 
+  // Handle optimization
   async function handleOptimization(e) {
     e.preventDefault();
+
+    // Call the optimizeRoutes mutation
     try {
-      const response = await optimizeRoutes({
+      await optimizeRoutes({
         depot,
         deliveries,
         numVehicles,
       });
-      console.log(response);
     } catch (error) {
       console.error(error);
     }
@@ -176,8 +186,10 @@ function CreateRoutes() {
       <div className="page-frame">
         <h1>Create Routes</h1>
         <hr />
+        {/* Deliveries Section */}
         <div className="page-section create-routes-deliveries">
           <h2>Deliveries</h2>
+          {/* Map and display the added deliveries */}
           <ul>
             {deliveries.map((delivery, index) => (
               <li key={index}>
@@ -192,13 +204,16 @@ function CreateRoutes() {
               </li>
             ))}
           </ul>
+          {/* Button to add open the new delivery modal */}
           <button className="btn btn-primary" onClick={setModalAddDeliveryOpen}>
             Add Delivery
           </button>
         </div>
         <hr />
+        {/* Optimize Routes Section */}
         <div className="page-section create-routes-optimizations">
           <h2>Optimize Routes</h2>
+          {/* Form to input the number of vehicles and depot */}
           <form className="form" onSubmit={handleOptimization}>
             <label htmlFor="numVehicles">Number of Vehicles:</label>
             <input
@@ -215,7 +230,7 @@ function CreateRoutes() {
               type="text"
               id="depot"
               required
-              disabled
+              disabled // Disabled the input field for now
               value={depot.formatted_address}
               onChange={handleDepotChange}
             />
@@ -223,14 +238,17 @@ function CreateRoutes() {
           </form>
           {optimizeRoutesIsLoading && <p>Loading...</p>}
         </div>
+
+        {/* Conditionally display optimization results if available */}
         {optimizeRoutesData && (
           <>
             <hr />
+            {/* Results Section */}
             <div className="page-section create-routes-results">
               <h2>Results</h2>
-              {/* <i>Select Route To View</i> */}
+              {/* Display each optimized route as a button which opens the route view */}
               <div className="create-routes-results-buttons">
-                {optimizeRoutesData.data.map((route, index) => (
+                {optimizeRoutesData.map((route, index) => (
                   <button
                     key={index}
                     onClick={() => setModalViewRouteOpen(route)}
@@ -249,6 +267,10 @@ function CreateRoutes() {
           </>
         )}
       </div>
+
+      {/* Modals */}
+
+      {/* Add delivery modal */}
       <Modal
         isOpen={modalAddDeliveryIsOpen}
         onRequestClose={setModalAddDeliveryClose}
@@ -261,6 +283,7 @@ function CreateRoutes() {
         <div className="page-frame">
           <h2>Add Delivery</h2>
           <hr />
+          {/* Add delivery form */}
           <div className="page-section">
             <form
               className="form add-delivery-form"
@@ -297,6 +320,8 @@ function CreateRoutes() {
           </div>
         </div>
       </Modal>
+
+      {/* View route modal */}
       <Modal
         isOpen={modalViewRouteIsOpen}
         onRequestClose={setModalViewRouteClose}
@@ -306,14 +331,63 @@ function CreateRoutes() {
         <button className="modal-close" onClick={setModalViewRouteClose}>
           ✖
         </button>
-        <h2>View Route </h2>
-        {selectedRoute && (
-          <RouteMap
-            route={selectedRoute}
-            deliveries={selectedRoute.deliveries.map((id) => deliveries[id])}
-            depot={depot}
-          />
-        )}
+        <div className="page-frame">
+          <h2>View Route</h2>
+          <hr />
+          {/* Route Map section */}
+          <div className="page-section">
+            {selectedRoute && (
+              <div className="create-routes-view-route">
+                <RouteMap
+                  route={selectedRoute}
+                  deliveries={selectedRoute.deliveries.map(
+                    (id) => deliveries[id]
+                  )}
+                  depot={depot}
+                />
+              </div>
+            )}
+          </div>
+          <hr />
+          {/* Route details section */}
+          <div className="page-section create-routes-view-route-details">
+            <h2>Route Details</h2>
+            {selectedRoute && (
+              <div>
+                <p>
+                  <b>Number of Stops: </b>
+                  {selectedRoute.deliveries.length}
+                </p>
+                <p>
+                  <b>Estimated Distance: </b>
+                  {(selectedRoute.routes[0].distanceMeters / 1000).toFixed(2)}
+                  km
+                </p>
+                <p>
+                  <b>Total Demand: </b>
+                  {selectedRoute.deliveries.reduce(
+                    (acc, id) => acc + deliveries[id].demand,
+                    0
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+          <hr />
+          {/* Deliveries section */}
+          <div className="page-section create-routes-view-route-deliveries">
+            <h2>Deliveries</h2>
+            <ul>
+              {selectedRoute &&
+                selectedRoute.deliveries.map((id, index) => (
+                  <li key={id}>
+                    <b>Stop {index + 1}: </b>
+                    {`${deliveries[id].formatted_address} (${deliveries[id].demand} demand)`}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </div>
       </Modal>
     </>
   );

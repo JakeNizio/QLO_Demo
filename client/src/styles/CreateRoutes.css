@@ -57,3 +57,41 @@
 .create-routes-results button:hover {
   border: 3px solid purple;
 }
+
+.create-routes-view-route {
+  height: 70vh;
+  width: 100%;
+  max-width: 85vw;
+  aspect-ratio: 16 / 9;
+}
+
+.create-routes-view-route-details div {
+  display: flex;
+  justify-content: center;
+  column-gap: 20px;
+  row-gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.create-routes-view-route-deliveries ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.create-routes-view-route-deliveries li {
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  background-color: white;
+  border-radius: 4px;
+}

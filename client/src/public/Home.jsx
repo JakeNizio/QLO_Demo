@@ -5,7 +5,7 @@ import { selectCurrentUser } from "../auth/authSlice";
 
 function Home() {
   const navigate = useNavigate();
-  const user = useSelector(selectCurrentUser);
+  const user = useSelector(selectCurrentUser); // Get the current user from the Redux store
 
   function handleCreateRoutesClick() {
     navigate("/createroutes");
@@ -15,7 +15,7 @@ function Home() {
     <div className="page-frame">
       <h1>Home</h1>
       <hr />
-      {user ? (
+      {user ? ( // Conditional rendering based on whether the user is logged in
         <>
           <h3>{'Click on the "Create Routes" button to get started.'}</h3>
           <button className="btn btn-primary" onClick={handleCreateRoutesClick}>
