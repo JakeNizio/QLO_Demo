@@ -30,7 +30,7 @@ Mac: `env/bin/activate`
 
 ### Create a .env file
 
-_Replace yourTokenHere with your tokens, Google token must have Maps JavaScript API & Routes API enabled_  
+_Replace yourTokenHere with your tokens, Google token must have Maps JavaScript API, Routes API & Geocoding API enabled_  
 Windows (Powershell):  
 `Set-Content -Path .env -Value "DWAVELEAP_TOKEN=yourTokenHere"`  
 `Add-Content -Path .env -Value "GOOGLEMAPS_API_KEY=yourTokenHere"`  
