@@ -49,7 +49,7 @@ Mac:
 
 ### Create a .env file
 
-_Replace yourTokenHere with your token, Google token must have Maps JavaScript API & Routes API enabled_  
+_Replace yourTokenHere with your token, Google token must have Maps JavaScript API, Routes API & Geocoding API enabled_  
 Windows (Powershell): `Set-Content -Path .env -Value "VITE_GOOGLEMAPS_API_KEY=yourTokenHere"`  
 Mac: `echo "VITE_GOOGLEMAPS_API_KEY=yourTokenHere" > .env`
 
