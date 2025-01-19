@@ -244,7 +244,7 @@ function CreateRoutes() {
           <h2>Optimize Routes</h2>
           {/* Form to input the number of vehicles and depot */}
           <form className="form" onSubmit={handleOptimization}>
-            <label htmlFor="numVehicles">Number of Vehicles:</label>
+            <label htmlFor="numVehicles">Max Number of Vehicles:</label>
             <input
               type="number"
               id="numVehicles"
@@ -286,7 +286,7 @@ function CreateRoutes() {
                     {` ${route.deliveries.length} stops | ${(
                       route.routes[0].distanceMeters / 1000
                     ).toFixed(1)} km | ${route.deliveries.reduce(
-                      (acc, id) => acc + deliveries[id].demand,
+                      (acc, id) => acc + parseInt(deliveries[id].demand),
                       0
                     )} demand`}
                   </button>

@@ -88,7 +88,6 @@ class OptimizeRoutesView(APIView):
 
         # Optimize routes using quantum CVRP
         routes = quantumCVRP(demand, depotCoordinates, deliveriesCoordinates, numVehicles)
-
         # Prepare data for Google Maps API
         depotRouteData = { # Depot route data
             "location": {
@@ -100,11 +99,12 @@ class OptimizeRoutesView(APIView):
             "vehicleStopover": True
         }
 
-        # Deliveries route data
+        routeDeliveryHash = {} # used to match indicies between routes and deliveriesRouteData
         deliveriesRouteData = []
-        for route in routes:
+        for index, route in enumerate(routes):
             route = route.astype(int)
             if len(route) != 0:
+                routeDeliveryHash[len(deliveriesRouteData)] = index
                 deliveriesRouteData.append([])
                 for delivery in route:
                     deliveriesRouteData[len(deliveriesRouteData) - 1].append({
@@ -157,7 +157,7 @@ class OptimizeRoutesView(APIView):
                 
                 # Parse JSON response
                 data = response.json()
-                data["deliveries"] = routes[i]
+                data["deliveries"] = routes[routeDeliveryHash[i]]
                 # Return routes results
                 googleRoutes.append(data)
 
