@@ -1,6 +1,7 @@
 import "../styles/CreateRoutes.css";
 import Modal from "react-modal";
 import RouteMap from "../components/RouteMap";
+import CSVUpload from "../components/CSVUpload.jsx";
 import { useState } from "react";
 import {
   useOptimizeRoutesMutation,
@@ -82,17 +83,14 @@ function CreateRoutes() {
     setModalViewRouteIsOpen(false);
   }
 
-  // Handle adding a delivery
-  async function handleAddDelivery(e) {
-    e.preventDefault();
-
-    // Get form values
-    const streetnumber = e.target.elements.streetnumber.value.trim();
-    const streetname = e.target.elements.streetname.value.trim();
-    const postalcode = e.target.elements.postalcode.value.trim();
-    const city = e.target.elements.city.value.trim();
-    const province = e.target.elements.province.value.trim();
-
+  async function geocodeDeliveryAddress(
+    streetnumber,
+    streetname,
+    postalcode,
+    city,
+    province,
+    demand
+  ) {
     // Validation flags
     let errors = [];
 
@@ -138,8 +136,8 @@ function CreateRoutes() {
 
     // If validation errors exist, show alerts and return
     if (errors.length > 0) {
-      alert(errors.join("\n"));
-      return;
+      // alert(errors.join("\n"));
+      throw new Error("bing");
     }
 
     // Concatenate validated address
@@ -149,11 +147,38 @@ function CreateRoutes() {
     try {
       const response = await geocodeAddress({ address }); // Call the geocodeAddress mutation
       const result = response.data.results[0]; // Get the first result
-      const demand = e.target.elements.demand.value; // Get the demand value from the form
-      setDeliveries([...deliveries, { ...result, demand: demand }]); // Add the delivery to the list
+      return { ...result, demand: demand }; // Return the geocode data with the demand value
     } catch (error) {
       console.error(error);
     }
+  }
+
+  // Handle adding a delivery
+  async function handleAddDelivery(e) {
+    e.preventDefault();
+
+    // Get form values
+    const streetnumber = e.target.elements.streetnumber.value.trim();
+    const streetname = e.target.elements.streetname.value.trim();
+    const postalcode = e.target.elements.postalcode.value.trim();
+    const city = e.target.elements.city.value.trim();
+    const province = e.target.elements.province.value.trim();
+    const demand = e.target.elements.demand.value.trim();
+
+    try {
+      const result = await geocodeDeliveryAddress(
+        streetnumber,
+        streetname,
+        postalcode,
+        city,
+        province,
+        demand
+      );
+      setDeliveries([...deliveries, result]);
+    } catch (error) {
+      console.error(error);
+    }
+
     setModalAddDeliveryClose();
   }
 
@@ -208,6 +233,10 @@ function CreateRoutes() {
           <button className="btn btn-primary" onClick={setModalAddDeliveryOpen}>
             Add Delivery
           </button>
+          <CSVUpload
+            setDeliveries={setDeliveries}
+            geocodeDeliveryAddress={geocodeDeliveryAddress}
+          />
         </div>
         <hr />
         {/* Optimize Routes Section */}

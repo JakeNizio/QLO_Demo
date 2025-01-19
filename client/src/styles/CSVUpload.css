@@ -1,0 +1,31 @@
+.CSVUpload-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 10px;
+}
+
+.CSVUpload-form input {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+}
+
+.CSVUpload-form input::file-selector-text {
+  background-color: red;
+}
+
+.CSVUpload-form input::file-selector-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: white;
+  color: black;
+  transition: all 0.2s ease-in-out;
+}
+
+.CSVUpload-form input::file-selector-button:hover {
+  background-color: rgb(216, 216, 216);
+}

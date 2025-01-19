@@ -45,6 +45,13 @@
   transition: all 0.2s ease-in-out;
 }
 
+.btn:disabled,
+.btn:disabled:hover {
+  background-color: rgb(200, 200, 200);
+  color: rgb(150, 150, 150);
+  cursor: not-allowed;
+}
+
 .btn-primary {
   background-color: purple;
   color: white;
