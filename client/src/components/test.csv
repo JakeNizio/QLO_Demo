@@ -1,6 +1,11 @@
 streetnumber,streetname,postalcode,city,province,demand
-290,Bremner Boulevard,M5V 3L9,Toronto,ON,1
-100,Queens Park,M5S 2C6,Toronto,ON,1
-220,Yonge Street,M5B 2H1,Toronto,ON,1
-2000,Meadowvale Road,M1B 5K7,Toronto,ON,1
-288,Bremner Boulevard,M5V 3L9,Toronto,ON,1
+18,King Street East,M5C 1C4,Toronto,ON,1
+120,Adelaide Street West,M5H 1T1,Toronto,ON,1
+45,Sheppard Avenue East,M2N 5W9,Toronto,ON,1
+1,Dundas Street West,M5G 1Z3,Toronto,ON,1
+1235,Bay Street,M5R 3K4,Toronto,ON,1
+2,Bloor Street West,M4W 3E2,Toronto,ON,1
+10,Dundas Street East,M5B 2G9,Toronto,ON,1
+25,York Street,M5J 2V5,Toronto,ON,1
+100,Simcoe Street,M5H 3G2,Toronto,ON,1
+200,Wellington Street West,M5V 3C7,Toronto,ON,1

@@ -31,9 +31,14 @@ function RouteMap({ route, deliveries, depot }) {
       // Check if Google Maps API is loaded
       if (map && window.google && window.google.maps) {
         // Decode the polyline path
-        const path = window.google.maps.geometry.encoding.decodePath(
-          route.routes[0].polyline.encodedPolyline
-        );
+        let path = [];
+        for (let i = 0; i < route.routes.length; i++) {
+          path = path.concat(
+            window.google.maps.geometry.encoding.decodePath(
+              route.routes[i].routes[0].polyline.encodedPolyline
+            )
+          );
+        }
 
         // Generate gradient colors
         const colors = generateGradient(path.length);
