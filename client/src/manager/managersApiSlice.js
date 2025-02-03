@@ -14,7 +14,15 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     optimizeRoutes: builder.mutation({
       // Define the query for the optimizeRoutes mutation
       query: (data) => ({
-        url: "/api/optimizeroutes/",
+        url: "/api/optimizeroutes/quantum/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    googleOptimizeRoutes: builder.mutation({
+      // Define the query for the optimizeRoutes mutation
+      query: (data) => ({
+        url: "/api/optimizeroutes/google/",
         method: "POST",
         body: data,
       }),
@@ -22,5 +30,8 @@ export const usersApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useOptimizeRoutesMutation, useGeocodeAddressMutation } =
-  usersApiSlice; // Export the hooks for the optimizeRoutes and geocodeAddress mutations
+export const {
+  useOptimizeRoutesMutation,
+  useGeocodeAddressMutation,
+  useGoogleOptimizeRoutesMutation,
+} = usersApiSlice; // Export the hooks for the optimizeRoutes and geocodeAddress mutations
